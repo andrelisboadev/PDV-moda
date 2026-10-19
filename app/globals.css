@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens de cor. Valores em "R G B" para o Tailwind aplicar transparência. */
+:root {
+  --fonte-titulo: "Bricolage Grotesque Variable";
+  --fonte-texto: "IBM Plex Sans";
+  --fonte-valor: "IBM Plex Mono";
+  --cor-primaria: 11 110 127; /* azul-petróleo #0B6E7F */
+  --cor-fundo: 244 248 247;
+  --cor-superficie: 255 255 255;
+  --cor-texto: 17 32 33;
+  --cor-suave: 82 103 103;
+  --cor-borda: 214 226 224;
+  /* Situação: só para "em dia", "atenção", "atrasado" */
+  --cor-ok: 21 128 74;
+  --cor-atencao: 161 98 7;
+  --cor-atraso: 185 28 28;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cor-primaria: 76 183 200;
+    --cor-fundo: 11 20 20;
+    --cor-superficie: 18 30 30;
+    --cor-texto: 230 240 239;
+    --cor-suave: 150 171 170;
+    --cor-borda: 40 58 58;
+    --cor-ok: 74 200 130;
+    --cor-atencao: 235 170 60;
+    --cor-atraso: 248 113 113;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --cor-primaria: 76 183 200;
+  --cor-fundo: 11 20 20;
+  --cor-superficie: 18 30 30;
+  --cor-texto: 230 240 239;
+  --cor-suave: 150 171 170;
+  --cor-borda: 40 58 58;
+  --cor-ok: 74 200 130;
+  --cor-atencao: 235 170 60;
+  --cor-atraso: 248 113 113;
+  color-scheme: dark;
+}
+
+html {
+  background: rgb(var(--cor-fundo));
+}
+body {
+  background: rgb(var(--cor-fundo));
+  color: rgb(var(--cor-texto));
+  font-family: var(--fonte-texto), system-ui, sans-serif;
+}
+
+@layer components {
+  .botao {
+    @apply inline-flex min-h-botao items-center justify-center rounded-xl bg-primaria px-5 text-base font-semibold text-fundo;
+  }
+  .botao:focus-visible,
+  .nav-item:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primaria;
+  }
+  .campo {
+    @apply min-h-botao w-full rounded-xl border border-borda bg-fundo px-4 text-base text-texto placeholder:text-suave;
+  }
+  .campo:focus-visible,
+  .botao-sec:focus-visible,
+  .chip:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-primaria;
+  }
+  .botao-sec {
+    @apply inline-flex min-h-botao items-center justify-center rounded-xl border border-borda bg-superficie px-4 text-sm font-medium text-texto;
+  }
+  .chip {
+    @apply inline-flex min-h-botao items-center justify-center rounded-xl border border-borda bg-superficie px-4 text-sm font-medium text-texto;
+  }
+  .chip[aria-pressed="true"] {
+    @apply border-primaria bg-primaria/10 text-primaria;
+  }
+  .cartao {
+    @apply rounded-2xl border border-borda bg-superficie p-4;
+  }
+  .nav-item {
+    @apply flex min-h-botao min-w-[4.5rem] flex-col items-center justify-center gap-0.5 rounded-xl px-3 text-xs font-medium text-suave;
+  }
+  .nav-item[aria-current="page"] {
+    @apply bg-primaria/10 text-primaria;
+  }
+}
