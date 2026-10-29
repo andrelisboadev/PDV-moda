@@ -2,6 +2,7 @@ import "server-only";
 import { auth } from "@/auth";
 import { criarContexto, type Contexto, type DepsContexto } from "./contexto";
 import { ErroApp } from "./erros";
+import { logErro } from "./log";
 import { cacheNext } from "./sheets/cache-next";
 import { driverGoogle } from "./sheets/google";
 
@@ -27,7 +28,8 @@ export async function resolverAcesso(email: string) {
   try {
     const ctx = await criarContexto(deps(), email);
     return { papel: ctx.usuario.papel };
-  } catch {
+  } catch (e) {
+    logErro("resolverAcesso", e);
     return null;
   }
 }

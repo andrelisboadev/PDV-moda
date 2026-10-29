@@ -12,7 +12,9 @@ export function logErro(onde: string, e: unknown): void {
   } else if (e instanceof ErroApp) {
     detalhe = `${e.codigo}: ${e.message}`;
   } else if (e instanceof Error) {
-    detalhe = e.name;
+    // Só nome e código numérico/curto (ex.: 403 do Google). Nunca a mensagem: pode ter dados.
+    const cod = (e as { code?: unknown; status?: unknown }).code ?? (e as { status?: unknown }).status;
+    detalhe = typeof cod === "number" || (typeof cod === "string" && cod.length <= 40) ? `${e.name} ${cod}` : e.name;
   } else {
     detalhe = typeof e;
   }
