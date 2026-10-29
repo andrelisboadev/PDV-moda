@@ -8,10 +8,26 @@ import { driverComRetry, type SheetsDriver } from "./driver";
  * em código do navegador). A chave vem de variável de ambiente (JSON em base64)
  * e nunca é registrada em log.
  */
+/**
+ * Aceita o JSON em base64 (o recomendado) ou o JSON puro, ignorando espaços, quebras de linha
+ * e aspas coladas por engano. Em caso de erro, diz QUAL variável está errada, nunca o conteúdo.
+ */
+function lerCredenciais(bruto: string): Record<string, unknown> {
+  const v = bruto.trim().replace(/^["']|["']$/g, "").trim();
+  const texto = v.startsWith("{") ? v : Buffer.from(v.replace(/\s+/g, ""), "base64").toString("utf8");
+  try {
+    const c = JSON.parse(texto) as Record<string, unknown>;
+    if (typeof c.client_email !== "string" || typeof c.private_key !== "string") throw new Error("campos");
+    return c;
+  } catch {
+    throw new Error("GOOGLE_SERVICE_ACCOUNT_B64 inválida: precisa ser o JSON da conta de serviço em base64");
+  }
+}
+
 function criarCliente(): sheets_v4.Sheets {
   const b64 = process.env.GOOGLE_SERVICE_ACCOUNT_B64;
   if (!b64) throw new Error("Configuração do servidor incompleta");
-  const credentials = JSON.parse(Buffer.from(b64, "base64").toString("utf8"));
+  const credentials = lerCredenciais(b64);
   const auth = new GoogleAuth({
     credentials,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
