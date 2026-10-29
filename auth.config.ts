@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
-import { rotaSoDono } from "@/lib/core/permissoes";
+import { rotaSoDono, type Papel } from "@/lib/core/permissoes";
 
 /**
  * Parte do Auth.js que roda também no middleware (sem acesso ao Sheets).
@@ -23,6 +23,12 @@ export const authConfig = {
     },
   },
   callbacks: {
+    // Precisa existir AQUI (e não só em auth.ts): o middleware usa só esta configuração,
+    // e sem isso o perfil do token nunca chega à sessão que o `authorized` lê.
+    async session({ session, token }) {
+      if (session.user) session.user.papel = token.papel as Papel | undefined;
+      return session;
+    },
     authorized({ auth, request }) {
       const caminho = request.nextUrl.pathname;
       if (caminho === "/login") return true;

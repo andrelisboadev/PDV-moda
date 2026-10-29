@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import { resolverAcesso } from "@/lib/core/deps";
 import { logErro } from "@/lib/core/log";
-import type { Papel } from "@/lib/core/permissoes";
 
 /**
  * Login só com Google. Nenhuma senha é guardada.
@@ -31,10 +30,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.papel = acesso?.papel;
       }
       return token;
-    },
-    async session({ session, token }) {
-      if (session.user) session.user.papel = token.papel as Papel | undefined;
-      return session;
     },
   },
 });
