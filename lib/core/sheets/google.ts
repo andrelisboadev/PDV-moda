@@ -129,6 +129,44 @@ const driverBruto: SheetsDriver = {
       },
     });
   },
+  async titulosDeAbas(spreadsheetId) {
+    idsDeAbas.delete(spreadsheetId);
+    return [...(await idsDasAbas(spreadsheetId)).keys()];
+  },
+  async copiarAbas(origemId, destinoId, abas, prefixo) {
+    const ids = await idsDasAbas(origemId);
+    for (const aba of abas) {
+      const sheetId = ids.get(aba);
+      if (sheetId == null) throw new Error("aba inexistente");
+      const copia = await api().spreadsheets.sheets.copyTo({
+        spreadsheetId: origemId,
+        sheetId,
+        requestBody: { destinationSpreadsheetId: destinoId },
+      });
+      const novoId = copia.data.sheetId;
+      if (novoId == null) throw new Error("cópia sem id");
+      await api().spreadsheets.batchUpdate({
+        spreadsheetId: destinoId,
+        requestBody: {
+          requests: [{ updateSheetProperties: { properties: { sheetId: novoId, title: `${prefixo} ${aba}` }, fields: "title" } }],
+        },
+      });
+    }
+    idsDeAbas.delete(destinoId);
+  },
+  async apagarAbas(spreadsheetId, titulos) {
+    if (titulos.length === 0) return;
+    idsDeAbas.delete(spreadsheetId);
+    const ids = await idsDasAbas(spreadsheetId);
+    const alvos = titulos.map((t) => ids.get(t)).filter((x): x is number => x != null);
+    if (alvos.length === 0) return;
+    if (alvos.length >= ids.size) throw new Error("não apaga todas as abas");
+    await api().spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: { requests: alvos.map((sheetId) => ({ deleteSheet: { sheetId } })) },
+    });
+    idsDeAbas.delete(spreadsheetId);
+  },
   async updateRow(spreadsheetId, aba, numeroLinha, valores) {
     await api().spreadsheets.values.update({
       spreadsheetId,

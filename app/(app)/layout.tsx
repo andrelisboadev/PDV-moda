@@ -25,6 +25,7 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
   if (ctx.pode("comissao.propria")) itens.push({ href: "/comissao", rotulo: "Comissão" });
   if (ctx.pode("caixa.ver")) itens.push({ href: "/caixa", rotulo: "Caixa" });
   if (ctx.pode("config.editar")) itens.push({ href: "/configuracoes", rotulo: "Configurações" });
+  if (ctx.pode("lgpd.gerir")) itens.push({ href: "/lgpd", rotulo: "Dados (LGPD)" });
 
   return (
     <div className="md:pl-56">

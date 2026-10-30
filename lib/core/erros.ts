@@ -1,7 +1,7 @@
 /** Erros de domínio. A mensagem é segura para o usuário; detalhes técnicos vão só para o log. */
 export class ErroApp extends Error {
   constructor(
-    readonly codigo: "nao_autenticado" | "proibido" | "conflito" | "invalido" | "planilha_invalida" | "interno",
+    readonly codigo: "nao_autenticado" | "proibido" | "conflito" | "invalido" | "planilha_invalida" | "limite" | "interno",
     mensagem: string,
   ) {
     super(mensagem);

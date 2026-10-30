@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
+import { LIMITES, ipDe, limitar } from "@/lib/core/limite";
 import { rotaSoDono, type Papel } from "@/lib/core/permissoes";
 
 /**
@@ -29,8 +30,25 @@ export const authConfig = {
       if (session.user) session.user.papel = token.papel as Papel | undefined;
       return session;
     },
-    authorized({ auth, request }) {
+    async authorized({ auth, request }) {
       const caminho = request.nextUrl.pathname;
+
+      // Limite de requisições ANTES de qualquer outra coisa, para segurar também quem não está logado.
+      const ehAuth = caminho.startsWith("/api/auth");
+      if (ehAuth || request.method === "POST") {
+        const l = await limitar({
+          chave: `ip:${ipDe(request.headers)}:${ehAuth ? "auth" : "envio"}`,
+          ...(ehAuth ? LIMITES.login : LIMITES.envioPorIp),
+        });
+        if (!l.ok) {
+          return new Response("Muitas tentativas. Aguarde um instante e tente de novo.", {
+            status: 429,
+            headers: { "Retry-After": String(l.esperarSeg) },
+          });
+        }
+      }
+      if (ehAuth) return true; // as rotas do Auth.js tratam a própria autenticação
+
       if (caminho === "/login") return true;
       if (!auth?.user) return false; // redireciona para /login
       if (rotaSoDono(caminho) && auth.user.papel !== "dono") {

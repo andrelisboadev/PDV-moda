@@ -72,6 +72,15 @@ async function lerMestra(deps: DepsContexto): Promise<Mestra> {
   });
 }
 
+/**
+ * Lojas ativas, para as rotinas automáticas (backup, conferência). NÃO usar em tela:
+ * mostra todas as lojas, então só roda em rota protegida por segredo (cron).
+ */
+export async function listarLojas(deps: DepsContexto): Promise<Array<{ planilhaId: string; nomeLoja: string }>> {
+  const { clientes } = await lerMestra(deps);
+  return clientes.filter((c) => c.ativo && !c.removidoEm).map((c) => ({ planilhaId: c.planilhaId, nomeLoja: c.nomeLoja }));
+}
+
 /* ---------------------------------- contexto ---------------------------------- */
 
 export class Contexto {

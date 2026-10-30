@@ -1,14 +1,14 @@
 # Balcão Moda
 
 Gestão de produção para lojas de roupas e variedades. Google Sheets como banco (uma planilha por loja),
-Next.js 15 + TypeScript, login com Google. **Estado: Fase 3 (vendas avançadas: crediário, condicional, troca, vale-troca, comissão) concluída.** Fase 4 (gestão) é a próxima.
+Next.js 15 + TypeScript, login com Google. **Estado: Fases 1, 2, 3 e 5 (endurecimento) concluídas.** Falta a Fase 4 (gestão), a documentação (Fase 6) e a entrega (Fase 7).
 
 ## Rodar localmente
 
 ```bash
 pnpm install
 cp .env.example .env.local      # preencha os valores (veja abaixo)
-pnpm test                       # 113 testes, não precisam de internet nem de credenciais
+pnpm test                       # 134 testes, não precisam de internet nem de credenciais
 pnpm dev                        # http://localhost:3000
 pnpm build && pnpm verificar:bundle
 ```
@@ -21,6 +21,9 @@ pnpm build && pnpm verificar:bundle
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | cliente OAuth "Entrar com Google" |
 | `GOOGLE_SERVICE_ACCOUNT_B64` | JSON da conta de serviço em base64 (`base64 -w0 chave.json`). Só no servidor |
 | `MASTER_SHEET_ID` | ID da planilha mestra (abas `Clientes` e `Acessos`) |
+| `CRON_SECRET` | texto aleatório de 32+ caracteres; a Vercel o envia ao chamar a rotina diária (backup e conferência) |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | opcional: limite de acessos compartilhado entre servidores. Sem eles, usa a memória |
+| `E2E_LOGIN_SECRET` | só na sua máquina, para testes automáticos. Nunca na Vercel (o sistema ignora se estiver na Vercel) |
 
 ## Estrutura
 
@@ -39,6 +42,8 @@ docs/adr/    decisões importantes
 - Dinheiro em centavos inteiros. Abas de registro são só de acréscimo.
 - Vendedor não recebe custo, caixa, contas nem comissões alheias (o servidor remove/recusa).
 - Estoque é a soma de um livro só de acréscimo. Venda = reservar, conferir pela ordem do livro e fechar num lote atômico (ADR 0002).
+- Cabeçalhos de segurança (CSP, HSTS, anti-frame) em toda resposta; limite de requisições por IP e por usuário.
+- Backup diário das abas e conferência automática dos registros (rota `/api/cron/diario`). Veja `docs/SEGURANCA.md`.
 - Preço, custo e limite de desconto vêm sempre do servidor, nunca do navegador.
 
 Documentação completa (arquitetura, segurança, implantação, LGPD, manual da lojista) entra na Fase 6.

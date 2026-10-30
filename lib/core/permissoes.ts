@@ -23,6 +23,7 @@ export type Permissao =
   | "usuarios.gerir"
   | "auditoria.ver"
   | "troca.estorno" // devolver dinheiro ao cliente
+  | "lgpd.gerir" // exportar e apagar dados pessoais de um cliente
   | "crediario.limite"; // definir o limite de crediário de cada cliente
 
 const DO_VENDEDOR: Permissao[] = [
@@ -46,6 +47,7 @@ const SO_DONO: Permissao[] = [
   "auditoria.ver",
   "troca.estorno",
   "crediario.limite",
+  "lgpd.gerir",
 ];
 
 export const PERMISSOES: Record<Papel, ReadonlySet<Permissao>> = {
@@ -90,6 +92,7 @@ export const PODE_ESCREVER_GENERICO = (papel: Papel, aba: NomeAba): boolean =>
 /** Rotas que só o dono abre. Usado no middleware (reforço) e nas páginas. */
 export const PREFIXOS_SO_DONO = [
   "/configuracoes",
+  "/lgpd",
   "/caixa",
   "/contas",
   "/comissoes",

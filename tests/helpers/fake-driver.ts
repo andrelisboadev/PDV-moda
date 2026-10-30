@@ -58,6 +58,27 @@ export class DriverFalso implements SheetsDriver {
     if (!p || blocos.some((b) => !p.has(b.aba))) throw new Error("aba inexistente");
     for (const b of blocos) this.aba(planilha, b.aba).push(...b.linhas.map((l) => [...l]));
   }
+  async titulosDeAbas(planilha: string) {
+    const p = this.planilhas.get(planilha);
+    if (!p) throw new Error("planilha inexistente");
+    return [...p.keys()];
+  }
+  async copiarAbas(origem: string, destino: string, abas: string[], prefixo: string) {
+    const o = this.planilhas.get(origem);
+    const d = this.planilhas.get(destino);
+    if (!o || !d) throw new Error("planilha inexistente");
+    for (const a of abas) {
+      const m = o.get(a);
+      if (!m) throw new Error("aba inexistente");
+      d.set(`${prefixo} ${a}`, m.map((l) => [...l]));
+    }
+  }
+  async apagarAbas(planilha: string, titulos: string[]) {
+    const p = this.planilhas.get(planilha);
+    if (!p) throw new Error("planilha inexistente");
+    if (titulos.filter((t) => p.has(t)).length >= p.size) throw new Error("não apaga todas as abas");
+    for (const t of titulos) p.delete(t);
+  }
   async updateRows(planilha: string, aba: string, linhas: Array<{ numero: number; valores: string[] }>) {
     this.chamadas.push({ tipo: "updateRows", planilha, aba });
     for (const l of linhas) this.aba(planilha, aba)[l.numero - 1] = [...l.valores];

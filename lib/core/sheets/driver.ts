@@ -21,6 +21,12 @@ export interface SheetsDriver {
    * conta como uma só requisição na cota. Texto sempre como texto, nunca como fórmula.
    */
   appendMultiplo(spreadsheetId: string, blocos: BlocoAppend[]): Promise<void>;
+  /** Títulos de todas as abas da planilha (leitura sem cache). */
+  titulosDeAbas(spreadsheetId: string): Promise<string[]>;
+  /** Copia abas de uma planilha para outra; cada cópia fica com o título `${prefixo} ${aba}`. */
+  copiarAbas(origemId: string, destinoId: string, abas: string[], prefixo: string): Promise<void>;
+  /** Apaga abas pelo título (nunca apaga todas: o Sheets exige ao menos uma). */
+  apagarAbas(spreadsheetId: string, titulos: string[]): Promise<void>;
 }
 
 export interface BlocoAppend {
@@ -77,5 +83,8 @@ export function driverComRetry(inner: SheetsDriver, o: OpcoesRetry = {}): Sheets
     updateRow: (id, aba, n, v) => comRetryCota(() => inner.updateRow(id, aba, n, v), o),
     updateRows: (id, aba, l) => comRetryCota(() => inner.updateRows(id, aba, l), o),
     appendMultiplo: (id, blocos) => comRetryCota(() => inner.appendMultiplo(id, blocos), o),
+    titulosDeAbas: (id) => comRetryCota(() => inner.titulosDeAbas(id), o),
+    copiarAbas: (o1, d, a, pf) => comRetryCota(() => inner.copiarAbas(o1, d, a, pf), o),
+    apagarAbas: (id, t) => comRetryCota(() => inner.apagarAbas(id, t), o),
   };
 }
