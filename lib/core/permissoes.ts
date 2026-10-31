@@ -93,6 +93,8 @@ export const PODE_ESCREVER_GENERICO = (papel: Papel, aba: NomeAba): boolean =>
 export const PREFIXOS_SO_DONO = [
   "/configuracoes",
   "/lgpd",
+  "/fechamento",
+  "/resumo",
   "/caixa",
   "/contas",
   "/comissoes",

@@ -1,4 +1,5 @@
 import { resumoCaixaDoDia } from "@/lib/core/caixa";
+import Link from "next/link";
 import { obterContexto } from "@/lib/core/deps";
 import { formatarReais } from "@/lib/core/dinheiro";
 import { ROTULO_FORMA, type FormaPagamento } from "@/lib/moda/tipos";
@@ -45,7 +46,8 @@ export default async function Caixa() {
           </tbody>
         </table>
       </div>
-      <p className="text-sm text-suave">Taxas da maquininha aparecem como saída. Abertura e fechamento do dia chegam na Fase 4.</p>
+      <p className="text-sm text-suave">Taxas da maquininha aparecem como saída.</p>
+      <Link href="/fechamento" className="botao">Fechar o dia</Link>
     </section>
   );
 }

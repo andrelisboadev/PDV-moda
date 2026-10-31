@@ -1,14 +1,14 @@
 # Balcão Moda
 
 Gestão de produção para lojas de roupas e variedades. Google Sheets como banco (uma planilha por loja),
-Next.js 15 + TypeScript, login com Google. **Estado: Fases 1, 2, 3 e 5 (endurecimento) concluídas.** Falta a Fase 4 (gestão), a documentação (Fase 6) e a entrega (Fase 7).
+Next.js 15 + TypeScript, login com Google. **Estado: Fases 1 a 5 concluídas** (inclui gestão: clientes, compras por grade, contas, fechamento, resumo mensal, etiquetas, painel). Falta a documentação (Fase 6) e a entrega (Fase 7).
 
 ## Rodar localmente
 
 ```bash
 pnpm install
 cp .env.example .env.local      # preencha os valores (veja abaixo)
-pnpm test                       # 134 testes, não precisam de internet nem de credenciais
+pnpm test                       # 147 testes, não precisam de internet nem de credenciais
 pnpm dev                        # http://localhost:3000
 pnpm build && pnpm verificar:bundle
 ```

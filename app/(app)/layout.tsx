@@ -22,15 +22,20 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
   if (ctx.pode("condicional.gerir")) itens.push({ href: "/condicional", rotulo: "Condicional" });
   if (ctx.pode("troca.registrar")) itens.push({ href: "/trocas", rotulo: "Trocas" });
   if (ctx.pode("estoque.ver")) itens.push({ href: "/estoque", rotulo: "Estoque" });
+  if (ctx.pode("cliente.gerir")) itens.push({ href: "/clientes", rotulo: "Clientes" });
   if (ctx.pode("comissao.propria")) itens.push({ href: "/comissao", rotulo: "Comissão" });
   if (ctx.pode("caixa.ver")) itens.push({ href: "/caixa", rotulo: "Caixa" });
+  if (ctx.pode("contas.ver")) itens.push({ href: "/contas", rotulo: "Contas" });
+  if (ctx.pode("compras.gerir")) itens.push({ href: "/compras", rotulo: "Compras" });
+  if (ctx.pode("caixa.ver")) itens.push({ href: "/resumo", rotulo: "Resumo" });
+  if (ctx.pode("estoque.ver")) itens.push({ href: "/etiquetas", rotulo: "Etiquetas" });
   if (ctx.pode("config.editar")) itens.push({ href: "/configuracoes", rotulo: "Configurações" });
   if (ctx.pode("lgpd.gerir")) itens.push({ href: "/lgpd", rotulo: "Dados (LGPD)" });
 
   return (
-    <div className="md:pl-56">
+    <div className="md:pl-56 print:pl-0">
       <Navegacao itens={itens} />
-      <header className="flex items-center justify-between gap-3 border-b border-borda bg-superficie px-4 py-3">
+      <header className="flex print:hidden items-center justify-between gap-3 border-b border-borda bg-superficie px-4 py-3">
         <p className="text-sm text-suave">
           Olá, <span className="font-semibold text-texto">{ctx.usuario.nome}</span>
         </p>
