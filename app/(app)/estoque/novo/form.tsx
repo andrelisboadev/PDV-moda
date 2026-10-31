@@ -57,8 +57,24 @@ export function NovoProdutoForm() {
   const [tamanhos, setTamanhos] = useState<string[]>([]);
   const [cores, setCores] = useState<string[]>([]);
   const [minimo, setMinimo] = useState("1");
+  const [qtds, setQtds] = useState<Record<string, string>>({});
+  const [todas, setTodas] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+
+  const listaTamanhos = semGrade ? ["Único"] : tamanhos;
+  const listaCores = semGrade ? ["Único"] : cores;
+  const chaveQ = (t: string, c: string) => `${t}\u0000${c}`;
+  const qtdValida = (v: string | undefined) => v === undefined || v === "" || /^\d{1,6}$/.test(v);
+  const qtdsOk = Object.values(qtds).every(qtdValida);
+  const totalInicial = listaTamanhos.reduce(
+    (s, t) => s + listaCores.reduce((s2, c) => s2 + (/^\d{1,6}$/.test(qtds[chaveQ(t, c)] ?? "") ? Number(qtds[chaveQ(t, c)]) : 0), 0),
+    0,
+  );
+  const preencherTodas = () => {
+    if (!/^\d{1,6}$/.test(todas)) return;
+    setQtds(Object.fromEntries(listaTamanhos.flatMap((t) => listaCores.map((c) => [chaveQ(t, c), todas]))));
+  };
 
   const combinacoes = semGrade ? 1 : tamanhos.length * cores.length;
   const custoC = lerReais(custo);
@@ -66,7 +82,7 @@ export function NovoProdutoForm() {
   const minimoN = /^\d{1,4}$/.test(minimo) ? Number(minimo) : null;
   const pronto =
     nome.trim().length >= 2 && categoria.trim().length >= 2 && custoC !== null && precoC !== null && precoC > 0 &&
-    minimoN !== null && combinacoes > 0 && combinacoes <= 200 && !enviando;
+    minimoN !== null && combinacoes > 0 && combinacoes <= 200 && qtdsOk && !enviando;
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
@@ -77,6 +93,12 @@ export function NovoProdutoForm() {
       nome, categoria, marca, custoCentavos: custoC, precoCentavos: precoC, minimo: minimoN,
       tamanhos: semGrade ? ["Único"] : tamanhos,
       cores: semGrade ? ["Único"] : cores,
+      quantidades: listaTamanhos.flatMap((t) =>
+        listaCores.flatMap((c) => {
+          const v = qtds[chaveQ(t, c)] ?? "";
+          return /^\d{1,6}$/.test(v) && Number(v) > 0 ? [{ tamanho: t, cor: c, quantidade: Number(v) }] : [];
+        }),
+      ),
     });
     setEnviando(false);
     if (!r.ok) return setErro(r.erro);
@@ -137,6 +159,34 @@ export function NovoProdutoForm() {
             : `${combinacoes} ${combinacoes === 1 ? "variação será criada" : "variações serão criadas"}, cada uma com código de barras próprio.`}
         </p>
       </div>
+
+      {combinacoes > 0 && combinacoes <= 200 && (
+        <div className="cartao flex flex-col gap-3">
+          <h2 className="font-titulo text-lg font-bold">Quantas peças você tem agora?</h2>
+          <p className="text-sm text-suave">Opcional. Digite quanto tem de cada {semGrade ? "peça" : "tamanho e cor"}; deixe em branco o que não tem. Isso vira o saldo inicial do estoque.</p>
+          <div className="flex items-end gap-2">
+            <label className="flex-1 text-sm text-suave">Mesma quantidade para todas
+              <input className="campo font-valor" inputMode="numeric" maxLength={6} value={todas} onChange={(e) => setTodas(e.target.value)} placeholder="Ex.: 3" />
+            </label>
+            <button type="button" className="botao-sec" onClick={preencherTodas}>Preencher todas</button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {listaTamanhos.flatMap((t) =>
+              listaCores.map((c) => {
+                const k = chaveQ(t, c);
+                const rotulo = [t, c].filter((x) => x !== "Único").join(" · ") || "Peça";
+                return (
+                  <label key={k} className="text-sm text-suave">{rotulo}
+                    <input className="campo font-valor" inputMode="numeric" maxLength={6} placeholder="0" value={qtds[k] ?? ""}
+                      aria-invalid={!qtdValida(qtds[k])} onChange={(e) => setQtds((q) => ({ ...q, [k]: e.target.value }))} />
+                  </label>
+                );
+              }),
+            )}
+          </div>
+          <p className="text-sm text-suave" aria-live="polite">Total: {totalInicial} {totalInicial === 1 ? "peça" : "peças"}.</p>
+        </div>
+      )}
 
       {erro && <p role="alert" className="rounded-xl border border-atraso/40 bg-atraso/10 p-3 text-sm text-atraso">{erro}</p>}
       <button type="submit" className="botao disabled:opacity-40" disabled={!pronto}>{enviando ? "Gravando…" : "Cadastrar produto"}</button>

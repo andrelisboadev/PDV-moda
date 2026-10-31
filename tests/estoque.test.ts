@@ -167,3 +167,27 @@ describe("utilidades de estoque", () => {
 });
 
 void criarMundo;
+
+describe("saldo inicial no cadastro do produto", () => {
+  it("lança o saldo por tamanho e cor, registra auditoria e ignora zeros", async () => {
+    const { dono } = await prepararLoja();
+    const { produtoId } = await criarProdutoComGrade(dono, {
+      nome: "Vestido Floral", categoria: "Feminina", custoCentavos: 4000, precoCentavos: 12990,
+      tamanhos: ["P", "M"], cores: ["Rosa"],
+      quantidades: [{ tamanho: "P", cor: "Rosa", quantidade: 4 }, { tamanho: "m", cor: "rosa", quantidade: 0 }],
+    });
+    const cat = (await montarCatalogo(dono, { fresco: true })).find((p) => p.id === produtoId)!;
+    const saldo = (t: string) => cat.variacoes.find((v) => v.tamanho === t)!.saldo;
+    expect(saldo("P")).toBe(4);
+    expect(saldo("M")).toBe(0);
+    const aud = (await dono.sistema.lerFresco("Auditoria")).map((a) => a.acao);
+    expect(aud).toEqual(expect.arrayContaining(["criar_produto", "ajuste_estoque:saldo_inicial"]));
+  });
+  it("recusa quantidade para combinação que não existe e quantidade negativa", async () => {
+    const { dono } = await prepararLoja();
+    const base = { nome: "Blusa", categoria: "Feminina", custoCentavos: 1000, precoCentavos: 3000, tamanhos: ["P"], cores: ["Azul"] };
+    await expect(criarProdutoComGrade(dono, { ...base, quantidades: [{ tamanho: "G", cor: "Azul", quantidade: 1 }] })).rejects.toMatchObject({ codigo: "invalido" });
+    await expect(criarProdutoComGrade(dono, { ...base, quantidades: [{ tamanho: "P", cor: "Azul", quantidade: -1 }] })).rejects.toThrow();
+    expect(await dono.sistema.lerFresco("Produtos")).toHaveLength(2); // os 2 da loja de teste: a tentativa recusada não gravou nada
+  });
+});

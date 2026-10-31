@@ -25,7 +25,7 @@ Escolha o cliente, "Crediário" e o número de parcelas. O sistema recusa se pas
 
 ## Só o dono
 
-- **Estoque > Novo produto:** nome, preço, custo, tamanhos e cores. O sistema cria todas as combinações e os códigos de barras.
+- **Estoque > Novo produto:** nome, preço, custo, tamanhos e cores. O sistema cria todas as combinações e os códigos de barras. Na mesma tela, em "Quantas peças você tem agora?", digite quantas tem de cada tamanho e cor (ou use "Preencher todas"): vira o saldo inicial do estoque.
 - **Estoque > Ajustar:** saldo inicial, contagem, perda e avaria. Tudo fica registrado.
 - **Compras:** cadastre o fornecedor; **Registrar compra**, abra a grade do produto e digite quantas peças de cada tamanho e cor chegaram. À vista sai do caixa; a prazo vira conta a pagar.
 - **Contas > A pagar:** marque como paga quando pagar o fornecedor.

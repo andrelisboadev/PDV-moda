@@ -84,6 +84,15 @@ export const NovoProdutoSchema = z
     tamanhos: z.array(textoCurto(20)).min(1).max(40),
     cores: z.array(textoCurto(40)).min(1).max(40),
     minimo: z.number().int().min(0).max(1000).default(0),
+    /** Saldo inicial por tamanho e cor (opcional). Combinações sem linha ficam com zero. */
+    quantidades: z
+      .array(
+        z
+          .object({ tamanho: textoCurto(20), cor: textoCurto(40), quantidade: z.number().int().min(0).max(100_000) })
+          .strict(),
+      )
+      .max(200)
+      .default([]),
   })
   .strict();
 export type NovoProduto = z.input<typeof NovoProdutoSchema>;
@@ -130,10 +139,19 @@ export async function criarProdutoComGrade(
         skus.add(sku);
         const codigoBarras = gerarEan13Interno(codigos);
         codigos.add(codigoBarras);
-        return { dados: { produtoId, sku, tamanho, cor, codigoBarras, minimo: e.minimo }, id: undefined };
+        return { dados: { produtoId, sku, tamanho, cor, codigoBarras, minimo: e.minimo }, id: ulid() };
       }),
     );
 
+    // saldo inicial: um lançamento de ajuste por variação com quantidade
+    const chave = (t: string, c: string) => `${normalizar(t)}|${normalizar(c)}`;
+    const porChave = new Map(variacoes.map((v) => [chave(v.dados.tamanho, v.dados.cor), v.id]));
+    const iniciais = new Map<string, number>();
+    for (const q of e.quantidades) {
+      const id = porChave.get(chave(q.tamanho, q.cor));
+      if (!id) throw new ErroApp("invalido", "Quantidade informada para um tamanho ou cor que não existe neste produto.");
+      iniciais.set(id, (iniciais.get(id) ?? 0) + q.quantidade);
+    }
     await ctx.sistema.acrescentar(
       "Produtos",
       {
@@ -149,6 +167,16 @@ export async function criarProdutoComGrade(
       produtoId,
     );
     await ctx.sistema.acrescentarVarios("Variacoes", variacoes, ctx.usuario.id);
+
+    const comSaldo = [...iniciais].filter(([, n]) => n > 0);
+    if (comSaldo.length > 0) {
+      await ctx.sistema.acrescentarVarios(
+        "Movimentos",
+        comSaldo.map(([variacaoId, quantidade]) => ({ dados: { variacaoId, tipo: "ajuste" as const, quantidade, origemId: undefined } })),
+        ctx.usuario.id,
+      );
+      await ctx.auditar("ajuste_estoque:saldo_inicial", "Produtos", produtoId);
+    }
     await ctx.auditar("criar_produto", "Produtos", produtoId);
     return { produtoId, variacoes: variacoes.length };
   });
