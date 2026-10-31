@@ -46,7 +46,7 @@ Lojas pequenas de roupa controlam estoque por tamanho e cor, fiado, condicional 
 - **Usabilidade:** celular primeiro, botões grandes, linguagem simples em português, acessibilidade básica (rótulos, foco, contraste).
 - **Desempenho:** cache de 30 s e leitura em lote por causa da cota do Sheets (60 leituras e 60 escritas/min por conta de serviço).
 - **Disponibilidade:** Vercel; backup diário; recuperação manual a partir do backup.
-- **Qualidade:** 147 testes automatizados (isolamento entre lojas, perfis, vendas, crediário, compras, contas, LGPD, backup), sem depender de internet.
+- **Qualidade:** 149 testes automatizados (isolamento entre lojas, perfis, vendas, crediário, compras, contas, LGPD, backup), sem depender de internet.
 
 ## 6. Modelo comercial
 Máximo de 5 clientes por sistema, uma instalação independente por cliente. Implantação R$ 450 + mensalidade R$ 149. Oferta de lançamento para 5 lojas fundadoras: R$ 225 + R$ 99 por 3 meses. Teste de 14 dias. Custo fixo: Vercel Pro (US$ 20 por assento, cobre todos os projetos).
