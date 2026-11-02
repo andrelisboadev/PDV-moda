@@ -8,7 +8,7 @@ Next.js 15 + TypeScript, login com Google. **Estado: Fases 1 a 5 concluídas** (
 ```bash
 pnpm install
 cp .env.example .env.local      # preencha os valores (veja abaixo)
-pnpm test                       # 149 testes, não precisam de internet nem de credenciais
+pnpm test                       # 151 testes, não precisam de internet nem de credenciais
 pnpm dev                        # http://localhost:3000
 pnpm build && pnpm verificar:bundle
 ```

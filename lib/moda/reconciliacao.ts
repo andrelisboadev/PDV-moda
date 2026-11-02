@@ -60,7 +60,9 @@ export function conferir(d: Dados): Divergencia[] {
     const pedido = new Map<string, number>();
     for (const i of its) pedido.set(i.variacaoId, (pedido.get(i.variacaoId) ?? 0) + i.quantidade);
     const mesmo = baixa.size === pedido.size && [...pedido].every(([k, q]) => baixa.get(k) === q);
-    if (!mesmo) out.push({ regra: "venda_estoque", id: v.id });
+    // Venda vinda de condicional não tem movimento "venda": as peças saíram do estoque na saída do
+    // condicional (tipo condicional_saida, outra origem). Sem movimento próprio, não há o que conferir aqui.
+    if ((movs.get(v.id)?.length ?? 0) > 0 && !mesmo) out.push({ regra: "venda_estoque", id: v.id });
 
     const esperadoCaixa = somar(ps.filter((p) => !FORMAS_SEM_CAIXA.has(p.forma)), (p) => p.valorCentavos);
     if (somar(caixa.get(v.id) ?? [], (c) => c.valorCentavos) !== esperadoCaixa) out.push({ regra: "caixa_venda", id: v.id });

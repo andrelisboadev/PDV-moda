@@ -9,6 +9,7 @@ import { fecharDia, fechamentoDoDia } from "@/lib/moda/fechamento";
 import { aniversariantes, montarPainel } from "@/lib/moda/painel";
 import { conferirLoja } from "@/lib/moda/reconciliacao";
 import { mesAtual, resumoMensal } from "@/lib/moda/resumo";
+import { listarCondicionais, registrarSaidaCondicional, resolverCondicional } from "@/lib/moda/condicional";
 import { registrarVenda } from "@/lib/moda/venda";
 import { configurar, darEstoque, prepararLoja, saldoDe } from "./helpers/loja";
 
@@ -199,5 +200,17 @@ describe("painel", () => {
     const v = await montarPainel(L.vend);
     expect(v).toMatchObject({ vendasHoje: 1, totalHojeCentavos: 5990 });
     expect(v.dono).toBeUndefined();
+  });
+});
+
+describe("conferência e condicional", () => {
+  it("venda que nasce de um condicional não é apontada como divergência de estoque", async () => {
+    const L = await loja();
+    await darEstoque(L.dono, L.v("M", "Azul"), 5);
+    const { clienteId } = await criarCliente(L.vend, { nome: "Rita Alves", consentimento: true });
+    const { condicionalId } = await registrarSaidaCondicional(L.vend, { clienteId, itens: [{ variacaoId: L.v("M", "Azul"), quantidade: 1 }] });
+    const [c] = await listarCondicionais(L.vend);
+    await resolverCondicional(L.vend, { condicionalId, resolucoes: [{ itemId: c!.itens[0]!.id, resultado: "comprou" }], pagamentos: [pix(5990)] });
+    expect(await conferirLoja(L.dono.sistema)).toEqual([]);
   });
 });
