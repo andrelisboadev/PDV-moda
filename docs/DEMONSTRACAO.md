@@ -24,3 +24,24 @@ Defina `DEMO_EMAIL_DONO` e `DEMO_EMAIL_VEND` antes do primeiro comando para já 
 ## Cuidados
 - Telefones e nomes são de exemplo. Não coloque dado real de cliente na demonstração.
 - Depois do teste, remova o e-mail do cliente de `Acessos` e `Usuarios` (ou marque `ativo` = FALSE).
+
+---
+
+## Link de demonstração online (`?demo=true`)
+
+O próprio app tem um modo demonstração: abre sem login Google e sem planilha, com a loja fictícia, e **guarda tudo no `localStorage` do navegador** de quem testa.
+
+**Como publicar (projeto Vercel separado dos clientes)**
+1. Novo projeto Vercel apontando para o mesmo repositório.
+2. Variáveis: `DEMO_ATIVO=1` e `AUTH_SECRET` (qualquer texto longo). **Não** coloque `MASTER_SHEET_ID` nem `GOOGLE_SERVICE_ACCOUNT_B64`.
+3. Depois do deploy, o link é `https://SEU-PROJETO.vercel.app/?demo=true`.
+
+**Como funciona**
+- O navegador é o dono do estado. O servidor mantém uma cópia de trabalho por visitante (memória, 3 h sem uso).
+- A cada poucos segundos e a cada navegação o navegador confere a versão. Se o servidor perdeu a cópia (reinício, outra instância), o navegador devolve o que guardou, e o servidor valida antes de aceitar (só as abas e cabeçalhos do sistema, só texto, tamanho limitado).
+- Faixa no topo: trocar entre Dona e Vendedora e "Reiniciar dados".
+- Dados datados de hoje ficam como estavam no dia do uso; "Reiniciar dados" recalcula a partir da data atual.
+
+**Segurança**
+- Trava: se o projeto tiver planilha mestra ou conta de serviço, o modo se desliga mesmo com `DEMO_ATIVO=1`. Um projeto de cliente nunca abre sem login por engano.
+- Nenhum dado real entra: tudo é fictício e fica só no navegador de quem testa.

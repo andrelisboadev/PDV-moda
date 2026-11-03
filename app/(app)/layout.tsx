@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { signOut } from "@/auth";
 import { Navegacao, type ItemNav } from "@/components/navegacao";
 import { obterContexto } from "@/lib/core/deps";
 import { ErroApp } from "@/lib/core/erros";
+import { DemoBarra } from "@/components/demo";
+import { demoAtivo } from "@/lib/demo/modo";
 
 export default async function LayoutApp({ children }: { children: React.ReactNode }) {
   let ctx;
@@ -32,23 +35,32 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
   if (ctx.pode("config.editar")) itens.push({ href: "/configuracoes", rotulo: "Configurações" });
   if (ctx.pode("lgpd.gerir")) itens.push({ href: "/lgpd", rotulo: "Dados (LGPD)" });
 
+  const demo = demoAtivo();
+
   return (
     <div className="md:pl-56 print:pl-0">
       <Navegacao itens={itens} />
+      {demo && (
+        <Suspense fallback={null}>
+          <DemoBarra papel={ctx.usuario.papel} />
+        </Suspense>
+      )}
       <header className="flex print:hidden items-center justify-between gap-3 border-b border-borda bg-superficie px-4 py-3">
         <p className="text-sm text-suave">
           Olá, <span className="font-semibold text-texto">{ctx.usuario.nome}</span>
         </p>
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/login" });
-          }}
-        >
-          <button type="submit" className="min-h-botao rounded-xl px-4 text-sm font-medium text-primaria">
-            Sair
-          </button>
-        </form>
+        {!demo && (
+          <form
+            action={async () => {
+              "use server";
+              await signOut({ redirectTo: "/login" });
+            }}
+          >
+            <button type="submit" className="min-h-botao rounded-xl px-4 text-sm font-medium text-primaria">
+              Sair
+            </button>
+          </form>
+        )}
       </header>
       <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-10">{children}</main>
     </div>

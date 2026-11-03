@@ -5,6 +5,8 @@ import { ErroApp } from "./erros";
 import { logErro } from "./log";
 import { cacheNext } from "./sheets/cache-next";
 import { driverGoogle } from "./sheets/google";
+import { obterContextoDemo } from "@/lib/demo/contexto";
+import { demoAtivo } from "@/lib/demo/modo";
 
 export function depsDeServidor(): DepsContexto {
   const masterId = process.env.MASTER_SHEET_ID;
@@ -17,6 +19,7 @@ export function depsDeServidor(): DepsContexto {
  * Loja e perfil vêm da sessão (e-mail do Google) + planilha mestra + aba Usuarios.
  */
 export async function obterContexto(): Promise<Contexto> {
+  if (demoAtivo()) return obterContextoDemo(); // projeto de demonstração: sem Google, loja fictícia
   const sessao = await auth();
   const email = sessao?.user?.email;
   if (!email) throw new ErroApp("nao_autenticado", "Entre para continuar.");
