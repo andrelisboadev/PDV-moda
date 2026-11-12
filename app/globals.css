@@ -50,8 +50,13 @@
 
 html {
   background: rgb(var(--cor-fundo));
+  -webkit-text-size-adjust: 100%;
 }
 body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none; /* sem "puxar para atualizar" sem querer no meio de uma venda */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   background: rgb(var(--cor-fundo));
   color: rgb(var(--cor-texto));
   font-family: var(--fonte-texto), system-ui, sans-serif;

@@ -16,7 +16,7 @@ export function Navegacao({ itens }: { itens: ItemNav[] }) {
     <>
       <nav
         aria-label="Principal"
-        className="fixed inset-x-0 bottom-0 z-10 flex print:hidden gap-1 overflow-x-auto border-t border-borda bg-superficie px-2 py-1 md:hidden"
+        className="fixed inset-x-0 bottom-0 z-10 flex print:hidden gap-1 overflow-x-auto border-t border-borda bg-superficie px-2 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 md:hidden"
       >
         {itens.map((i) => (
           <Link key={i.href} href={i.href} className="nav-item shrink-0" aria-current={ativo(i.href) ? "page" : undefined}>

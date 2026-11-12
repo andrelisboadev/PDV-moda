@@ -48,3 +48,16 @@ Escolha o cliente, "Crediário" e o número de parcelas. O sistema recusa se pas
 **Errei uma venda.** Use Trocas (devolução). Não edite a planilha.
 **Faltou peça no estoque mas ela existe na loja.** Estoque > Ajustar > "contagem".
 **Meus dados estão seguros?** Ficam na planilha da sua loja, que só você e o suporte acessam. Há cópia automática todo dia às 3h, guardada por 7 dias.
+
+---
+
+## Instalar o Balcão Moda no celular (como um app)
+
+Não precisa de loja de aplicativos. Abra o endereço do sistema no celular e instale:
+
+- **Android (Chrome):** toque em **Instalar app** na faixa que aparece no topo (ou no menu ⋮ → **Instalar app**).
+- **iPhone (Safari):** toque em **Compartilhar** → **Adicionar à Tela de Início**.
+
+O ícone "Balcão" aparece na tela inicial e o sistema abre em tela cheia, sem a barra do navegador. Segurando o ícone no Android há atalhos para **Nova venda**, **Caixa** e **Estoque**.
+
+O sistema precisa de internet para mostrar e gravar vendas, estoque e caixa. Sem conexão aparece a tela "Sem internet" e nada se perde; quando a conexão voltar, toque em "Tentar de novo".

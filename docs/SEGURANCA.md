@@ -27,3 +27,7 @@ Revisão contra o OWASP Top 10 (2021). Última atualização: Fase 5.
 3. **Chaves**: se uma chave vazar, apague no Google Cloud, crie outra, atualize a variável na Vercel e faça novo deploy.
 4. **LGPD**: pedido de cópia ou exclusão pelo menu "Dados (LGPD)", em até 15 dias. Anonimizar não pode ser desfeito.
 5. **Incidente**: anote data e hora, tire o acesso da pessoa em `Usuarios` (ativo = FALSE), troque as chaves e avise os clientes afetados.
+
+## App instalável (PWA)
+
+O service worker (`public/sw.js`) guarda só arquivos estáticos (scripts, estilos, fontes, ícones) e a tela `offline.html`. Nunca guarda páginas, respostas de API nem dados da sessão: vendas, clientes e caixa só trafegam com internet e não ficam no aparelho, para não vazar em celular compartilhado. Envios (POST) vão sempre direto à rede. Manifesto, `sw.js` e `offline.html` são públicos de propósito (o navegador os busca sem cookie) e não têm dado algum. Testes em `tests/pwa.test.ts`.

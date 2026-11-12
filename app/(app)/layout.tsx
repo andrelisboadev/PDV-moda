@@ -5,6 +5,7 @@ import { Navegacao, type ItemNav } from "@/components/navegacao";
 import { obterContexto } from "@/lib/core/deps";
 import { ErroApp } from "@/lib/core/erros";
 import { DemoBarra } from "@/components/demo";
+import { Pwa } from "@/components/pwa";
 import { demoAtivo } from "@/lib/demo/modo";
 
 export default async function LayoutApp({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,7 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
   return (
     <div className="md:pl-56 print:pl-0">
       <Navegacao itens={itens} />
+      <Pwa />
       {demo && (
         <Suspense fallback={null}>
           <DemoBarra papel={ctx.usuario.papel} />
@@ -62,7 +64,7 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
           </form>
         )}
       </header>
-      <main className="mx-auto max-w-3xl px-4 pb-28 pt-6 md:pb-10">{children}</main>
+      <main className="mx-auto max-w-3xl px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-6 md:pb-10">{children}</main>
     </div>
   );
 }

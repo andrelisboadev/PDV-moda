@@ -11,12 +11,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Balcão Moda",
   description: "Gestão simples para a sua loja de roupas e variedades.",
+  applicationName: "Balcão Moda",
+  appleWebApp: { capable: true, title: "Balcão", statusBarStyle: "default" },
+  icons: { icon: "/favicon.ico", apple: "/icons/apple-touch-icon.png" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0B6E7F",
+  viewportFit: "cover", // usa a tela toda (com o entalhe do iPhone); o app respeita as áreas seguras
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0B6E7F" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1414" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

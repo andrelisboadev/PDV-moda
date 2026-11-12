@@ -16,5 +16,5 @@ export default function middleware(req: NextRequest, ev: NextFetchEvent) {
 export const config = {
   // Tudo, menos arquivos estáticos, ícones e as rotas de cron (que têm o próprio segredo).
   // A rota do Auth.js ENTRA aqui só para receber o limite de requisições.
-  matcher: ["/((?!api/cron|_next/static|_next/image|favicon.ico|icons).*)"],
+  matcher: ["/((?!api/cron|_next/static|_next/image|favicon.ico|icons|manifest.webmanifest|sw.js|offline.html).*)"],
 };
